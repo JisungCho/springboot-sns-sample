@@ -1,5 +1,7 @@
 package com.apiece.springbootsnssample.config;
 
+import com.apiece.springbootsnssample.security.JsonAuthenticationFailureHandler;
+import com.apiece.springbootsnssample.security.JsonAuthenticationSuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,6 +10,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import tools.jackson.databind.ObjectMapper;
 
 @Configuration
 @EnableWebSecurity
@@ -26,14 +29,29 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public JsonAuthenticationSuccessHandler jsonAuthenticationSuccessHandler(ObjectMapper objectMapper) {
+        return new JsonAuthenticationSuccessHandler(objectMapper);
+    }
+
+    @Bean
+    public JsonAuthenticationFailureHandler jsonAuthenticationFailureHandler(ObjectMapper objectMapper) {
+        return new JsonAuthenticationFailureHandler(objectMapper);
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http,
+                                                   JsonAuthenticationSuccessHandler successHandler,
+                                                   JsonAuthenticationFailureHandler failureHandler) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/users/signup").permitAll()
+                        .requestMatchers("/login", "/api/v1/users/signup").permitAll()
                         .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginProcessingUrl("/api/v1/login")
+                        .successHandler(successHandler)
+                        .failureHandler(failureHandler)
                 );
         return http.build();
     }

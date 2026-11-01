@@ -3,7 +3,8 @@
     "allow": [
       "Skill(spring-api-rules)",
       "PowerShell(.\\\\gradlew.bat test --console=plain 2>&1 | Select-Object -Last 50)",
-      "PowerShell(.\\\\gradlew.bat test --console=plain 2>&1 | Select-Object -Last 60)"
+      "PowerShell(.\\\\gradlew.bat test --console=plain 2>&1 | Select-Object -Last 60)",
+      "Bash(./gradlew test *)"
     ]
   }
 }
