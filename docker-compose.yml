@@ -1,0 +1,12 @@
+services:
+  redis:
+    image: redis:7
+    container_name: sns-session-redis
+    ports:
+      - "16379:6379"
+    volumes:
+      - sns-session-redis-data:/data
+    restart: unless-stopped
+
+volumes:
+  sns-session-redis-data:

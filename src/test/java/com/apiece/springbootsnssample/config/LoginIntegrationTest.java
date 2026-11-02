@@ -2,7 +2,7 @@ package com.apiece.springbootsnssample.config;
 
 import com.apiece.springbootsnssample.domain.user.User;
 import com.apiece.springbootsnssample.domain.user.UserRepository;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Cookie;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.http.MediaType;
 import org.junit.jupiter.api.DisplayName;
@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -95,18 +94,18 @@ class LoginIntegrationTest {
     }
 
     @Test
-    @DisplayName("로그인으로 받은 세션(JSESSIONID)으로 보호 페이지에 접근할 수 있다")
+    @DisplayName("로그인으로 받은 세션(SESSION)으로 보호 페이지에 접근할 수 있다")
     void access_protected_page_with_session() throws Exception {
         // given
         MvcResult loginResult = mockMvc.perform(login("user1", "password123"))
                 .andExpect(authenticated())
                 .andReturn();
 
-        HttpSession session = loginResult.getRequest().getSession(false);
-        assertThat(session).isNotNull();
+        Cookie sessionCookie = loginResult.getResponse().getCookie("SESSION");
+        assertThat(sessionCookie).isNotNull();
 
         // when & then
-        mockMvc.perform(get("/").session((MockHttpSession) session))
+        mockMvc.perform(get("/").cookie(sessionCookie))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("user1")));
     }

@@ -1,5 +1,6 @@
 package com.apiece.springbootsnssample.domain.user;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import lombok.Getter;
@@ -17,7 +18,9 @@ import org.springframework.security.core.userdetails.UserDetails;
  */
 @Getter
 @RequiredArgsConstructor
-public class UserPrincipal implements UserDetails {
+public class UserPrincipal implements UserDetails, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private static final String DEFAULT_ROLE = "ROLE_USER";
 
