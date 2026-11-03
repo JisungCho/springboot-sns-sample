@@ -47,9 +47,9 @@ curl -s -i -X GET "$BASE_URL/api/v1/users/me"
 
 echo ""
 echo "=========================================="
-echo "6. 로그아웃 (POST /logout)"
+echo "6. 로그아웃 (POST /api/v1/logout)"
 echo "=========================================="
-curl -s -i -X POST "$BASE_URL/logout" \
+curl -s -i -X POST "$BASE_URL/api/v1/logout" \
   -b "$COOKIE_FILE"
 
 echo ""

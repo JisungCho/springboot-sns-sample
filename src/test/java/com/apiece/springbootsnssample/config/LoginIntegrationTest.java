@@ -119,11 +119,12 @@ class LoginIntegrationTest {
     }
 
     @Test
-    @DisplayName("로그아웃하면 인증이 해제되고 /login?logout으로 리다이렉트된다")
+    @DisplayName("로그아웃하면 인증이 해제되고 JSON으로 응답한다")
     void logout_success() throws Exception {
         // when & then
-        mockMvc.perform(post("/logout").with(csrf()))
+        mockMvc.perform(post("/api/v1/logout").with(csrf()))
                 .andExpect(unauthenticated())
-                .andExpect(redirectedUrl("/login?logout"));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.message").value("로그아웃되었습니다."));
     }
 }

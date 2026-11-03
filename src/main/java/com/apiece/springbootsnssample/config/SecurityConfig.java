@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.session.SessionRegistry;
 import com.apiece.springbootsnssample.security.JsonAuthenticationSuccessHandler;
+import com.apiece.springbootsnssample.security.JsonLogoutSuccessHandler;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,9 +48,15 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JsonLogoutSuccessHandler jsonLogoutSuccessHandler(ObjectMapper objectMapper) {
+        return new JsonLogoutSuccessHandler(objectMapper);
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JsonAuthenticationSuccessHandler successHandler,
                                                    JsonAuthenticationFailureHandler failureHandler,
+                                                   JsonLogoutSuccessHandler logoutSuccessHandler,
                                                    SessionRegistry sessionRegistry,
                                                    SessionPolicyProperties sessionPolicy,
                                                    ObjectMapper objectMapper) throws Exception {
@@ -76,6 +83,10 @@ public class SecurityConfig {
                         .loginProcessingUrl("/api/v1/login")
                         .successHandler(successHandler)
                         .failureHandler(failureHandler)
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/api/v1/logout")
+                        .logoutSuccessHandler(logoutSuccessHandler)
                 );
         return http.build();
     }
