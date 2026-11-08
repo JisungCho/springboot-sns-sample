@@ -1,6 +1,18 @@
 spring:
   application:
     name: springboot-sns-sample
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:sns}
+    username: ${POSTGRES_USER:sns}
+    password: ${POSTGRES_PASSWORD:sns}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  sql:
+    init:
+      # 기동 시마다 ddl.sql 실행 (IF NOT EXISTS 라서 재실행해도 안전). 이후 Hibernate가 스키마를 validate 한다.
+      mode: always
+      schema-locations: classpath:ddl.sql
   data:
     redis:
       host: ${REDIS_HOST:localhost}
@@ -28,5 +40,6 @@ server:
 
 logging:
   level:
+    org.springframework.jdbc.datasource.init.ScriptUtils: debug
     org.hibernate.SQL: debug
     org.hibernate.orm.jdbc.bind: trace

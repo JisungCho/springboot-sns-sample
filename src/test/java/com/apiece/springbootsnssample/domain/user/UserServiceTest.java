@@ -1,5 +1,6 @@
 package com.apiece.springbootsnssample.domain.user;
 
+import com.apiece.springbootsnssample.domain.followcount.FollowCountService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +26,9 @@ class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private FollowCountService followCountService;
+
     @InjectMocks
     private UserService userService;
 
@@ -35,15 +39,24 @@ class UserServiceTest {
         User user = new User("user1", "raw-password");
         given(userRepository.existsByUsername("user1")).willReturn(false);
         given(passwordEncoder.encode("raw-password")).willReturn("encoded-password");
-        given(userRepository.save(any(User.class))).willAnswer(invocation -> invocation.getArgument(0));
+        given(userRepository.save(any(User.class))).willAnswer(invocation -> {
+            User argument = invocation.getArgument(0);
+            return User.builder()
+                    .id(1L)
+                    .username(argument.getUsername())
+                    .password(argument.getPassword())
+                    .build();
+        });
 
         // when
         User saved = userService.signup(user);
 
         // then
+        assertThat(saved.getId()).isEqualTo(1L);
         assertThat(saved.getUsername()).isEqualTo("user1");
         assertThat(saved.getPassword()).isEqualTo("encoded-password");
         then(userRepository).should().save(user);
+        then(followCountService).should().create(1L);
     }
 
     @Test
@@ -61,5 +74,6 @@ class UserServiceTest {
         assertThat(exception.getStatus()).isEqualTo(HttpStatus.CONFLICT);
         assertThat(exception.getMessage()).contains("user1");
         then(userRepository).should(never()).save(any(User.class));
+        then(followCountService).should(never()).create(any());
     }
 }

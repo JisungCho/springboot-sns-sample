@@ -8,5 +8,20 @@ services:
       - sns-session-redis-data:/data
     restart: unless-stopped
 
+  postgres:
+    image: postgres:17
+    container_name: sns-postgres
+    environment:
+      POSTGRES_DB: sns
+      POSTGRES_USER: sns
+      POSTGRES_PASSWORD: sns
+    ports:
+      - "5432:5432"
+    volumes:
+      - sns-postgres-data:/var/lib/postgresql/data
+      - ./src/main/resources/ddl.sql:/docker-entrypoint-initdb.d/01-ddl.sql:ro
+    restart: unless-stopped
+
 volumes:
   sns-session-redis-data:
+  sns-postgres-data:
