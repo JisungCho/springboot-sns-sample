@@ -1,6 +1,7 @@
 package com.apiece.springbootsnssample.common.exception;
 
 import com.apiece.springbootsnssample.domain.follow.FollowException;
+import com.apiece.springbootsnssample.domain.post.PostException;
 import com.apiece.springbootsnssample.domain.user.UserException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -18,6 +19,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(FollowException.class)
     public ResponseEntity<ErrorResponse> handleFollowException(FollowException e) {
+        return ResponseEntity.status(e.getStatus()).body(ErrorResponse.from(e.getMessage()));
+    }
+
+    @ExceptionHandler(PostException.class)
+    public ResponseEntity<ErrorResponse> handlePostException(PostException e) {
         return ResponseEntity.status(e.getStatus()).body(ErrorResponse.from(e.getMessage()));
     }
 
