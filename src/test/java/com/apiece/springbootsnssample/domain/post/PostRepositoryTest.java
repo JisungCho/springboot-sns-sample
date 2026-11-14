@@ -94,17 +94,21 @@ class PostRepositoryTest {
         postRepository.incrementReplyCount(postId);
         postRepository.incrementRepostCount(postId);
         postRepository.incrementViewCount(postId);
+        postRepository.incrementLikeCount(postId);
 
         // then
         Post incremented = postRepository.findById(postId).orElseThrow();
         assertThat(incremented.getReplyCount()).isEqualTo(1);
         assertThat(incremented.getRepostCount()).isEqualTo(1);
         assertThat(incremented.getViewCount()).isEqualTo(1);
+        assertThat(incremented.getLikeCount()).isEqualTo(1);
 
         // when
         postRepository.decrementReplyCount(postId);
         postRepository.decrementReplyCount(postId);
         postRepository.decrementRepostCount(postId);
+        postRepository.decrementLikeCount(postId);
+        postRepository.decrementLikeCount(postId);
 
         // then
         Post decremented = postRepository.findById(postId).orElseThrow();

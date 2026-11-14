@@ -120,9 +120,9 @@ public class PostService {
     }
 
     /**
-     * 리포스트를 대상으로 답글/인용/리포스트를 달면 원본을 대상으로 삼는다.
+     * 리포스트를 대상으로 답글/인용/리포스트/좋아요를 달면 원본을 대상으로 삼는다.
      */
-    private Post getNormalizedTarget(Long postId) {
+    public Post getNormalizedTarget(Long postId) {
         Post target = getPostOrThrow(postId);
         if (target.isRepost()) {
             return getPostOrThrow(target.getRepostId());

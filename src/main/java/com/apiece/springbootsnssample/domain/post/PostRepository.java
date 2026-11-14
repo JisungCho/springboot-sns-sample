@@ -1,5 +1,6 @@
 package com.apiece.springbootsnssample.domain.post;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.EntityGraph;
@@ -48,4 +49,20 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update Post p set p.viewCount = p.viewCount + 1, p.updatedAt = CURRENT_TIMESTAMP where p.id = :postId")
     int incrementViewCount(@Param("postId") Long postId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update Post p set p.likeCount = p.likeCount + 1, p.updatedAt = CURRENT_TIMESTAMP where p.id = :postId")
+    int incrementLikeCount(@Param("postId") Long postId);
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Query("update Post p set p.likeCount = p.likeCount - 1, p.updatedAt = CURRENT_TIMESTAMP "
+            + "where p.id = :postId and p.likeCount > 0")
+    int decrementLikeCount(@Param("postId") Long postId);
+
+    @Query("select p.likeCount from Post p where p.id = :postId")
+    Optional<Integer> findLikeCountById(@Param("postId") Long postId);
+
+    // 내가 좋아요한 게시글 목록. 좋아요 순서(최신순)는 서비스에서 유지한다.
+    @EntityGraph(attributePaths = "user")
+    List<Post> findAllByIdIn(Collection<Long> ids);
 }

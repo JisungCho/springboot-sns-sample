@@ -1,6 +1,7 @@
 package com.apiece.springbootsnssample.common.exception;
 
 import com.apiece.springbootsnssample.domain.follow.FollowException;
+import com.apiece.springbootsnssample.domain.like.LikeException;
 import com.apiece.springbootsnssample.domain.post.PostException;
 import com.apiece.springbootsnssample.domain.user.UserException;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(PostException.class)
     public ResponseEntity<ErrorResponse> handlePostException(PostException e) {
+        return ResponseEntity.status(e.getStatus()).body(ErrorResponse.from(e.getMessage()));
+    }
+
+    @ExceptionHandler(LikeException.class)
+    public ResponseEntity<ErrorResponse> handleLikeException(LikeException e) {
         return ResponseEntity.status(e.getStatus()).body(ErrorResponse.from(e.getMessage()));
     }
 
