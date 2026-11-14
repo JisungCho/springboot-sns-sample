@@ -46,9 +46,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
             + "where p.id = :postId and p.repostCount > 0")
     int decrementRepostCount(@Param("postId") Long postId);
 
+    // 조회수는 Redis에 모아 두었다가 스케줄러가 한 번에 반영하므로 증가량을 인자로 받는다.
     @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query("update Post p set p.viewCount = p.viewCount + 1, p.updatedAt = CURRENT_TIMESTAMP where p.id = :postId")
-    int incrementViewCount(@Param("postId") Long postId);
+    @Query("update Post p set p.viewCount = p.viewCount + :delta, p.updatedAt = CURRENT_TIMESTAMP where p.id = :postId")
+    int incrementViewCountBy(@Param("postId") Long postId, @Param("delta") long delta);
 
     @Modifying(clearAutomatically = true, flushAutomatically = true)
     @Query("update Post p set p.likeCount = p.likeCount + 1, p.updatedAt = CURRENT_TIMESTAMP where p.id = :postId")

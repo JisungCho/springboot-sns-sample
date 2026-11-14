@@ -269,11 +269,10 @@ class PostServiceTest {
     }
 
     @Test
-    @DisplayName("게시글을 조회하면 viewCount를 증가시키고 작성자와 함께 반환한다")
-    void get_post_increments_view_count() {
+    @DisplayName("게시글을 조회하면 작성자와 함께 반환하고 조회수는 건드리지 않는다")
+    void get_post_returns_post_without_touching_view_count() {
         // given
         Post post = Post.builder().id(10L).user(author).content("content").build();
-        given(postRepository.incrementViewCount(10L)).willReturn(1);
         given(postRepository.findWithUserById(10L)).willReturn(Optional.of(post));
 
         // when
@@ -281,14 +280,14 @@ class PostServiceTest {
 
         // then
         assertThat(result.getId()).isEqualTo(10L);
-        then(postRepository).should().incrementViewCount(10L);
+        then(postRepository).should(never()).incrementViewCountBy(anyLong(), anyLong());
     }
 
     @Test
     @DisplayName("존재하지 않는 게시글을 조회하면 PostException(NOT_FOUND)이 발생한다")
     void get_missing_post_throws_not_found() {
         // given
-        given(postRepository.incrementViewCount(10L)).willReturn(0);
+        given(postRepository.findWithUserById(10L)).willReturn(Optional.empty());
 
         // when
         PostException exception = catchThrowableOfType(

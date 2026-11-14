@@ -68,11 +68,12 @@ public class PostService {
         postRepository.decrementRepostCount(target.getId());
     }
 
-    @Transactional
+    /**
+     * 게시글 단건을 조회한다.
+     *
+     * <p>조회수 증가는 DB를 직접 갱신하지 않고 {@link PostViewCountService}가 Redis에 기록한다.
+     */
     public Post getPost(Long postId) {
-        if (postRepository.incrementViewCount(postId) == 0) {
-            throw new PostException(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다.");
-        }
         return postRepository.findWithUserById(postId)
                 .orElseThrow(() -> new PostException(HttpStatus.NOT_FOUND, "존재하지 않는 게시글입니다."));
     }

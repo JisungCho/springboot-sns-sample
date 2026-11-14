@@ -63,7 +63,8 @@ echo "POST_ID=$POST_ID"
 
 echo ""
 echo "=========================================="
-echo "4. 게시글 단건 조회 (GET /api/v1/posts/{postId}, 200, viewCount +1)"
+echo "4. 게시글 단건 조회 (GET /api/v1/posts/{postId}, 200)"
+echo "     조회수는 이 API에서 오르지 않는다. POST /api/v1/posts/{postId}/views 로 집계한다(view.sh)."
 echo "=========================================="
 curl -s -i -X GET "$BASE_URL/api/v1/posts/$POST_ID" \
   -b "$COOKIE_USER2"

@@ -120,18 +120,14 @@ class PostIntegrationTest {
         // 게시글 작성
         long postId = createPost(user1Session, "첫 게시글");
 
-        // 단건 조회 시 viewCount가 증가한다
+        // 단건 조회 시 작성자 정보와 함께 반환된다 (조회수는 POST /views 로 집계한다)
         mockMvc.perform(get("/api/v1/posts/" + postId).cookie(user2Session))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(postId))
                 .andExpect(jsonPath("$.content").value("첫 게시글"))
                 .andExpect(jsonPath("$.authorId").value(user1Id))
                 .andExpect(jsonPath("$.authorUsername").value("user1"))
-                .andExpect(jsonPath("$.viewCount").value(1));
-
-        mockMvc.perform(get("/api/v1/posts/" + postId).cookie(user2Session))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.viewCount").value(2));
+                .andExpect(jsonPath("$.viewCount").value(0));
 
         // 답글 작성 후 부모의 replyCount가 증가한다
         long replyId = createChild(user2Session, postId, "replies", "답글");

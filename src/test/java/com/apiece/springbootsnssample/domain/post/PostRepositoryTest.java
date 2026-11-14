@@ -93,14 +93,14 @@ class PostRepositoryTest {
         // when
         postRepository.incrementReplyCount(postId);
         postRepository.incrementRepostCount(postId);
-        postRepository.incrementViewCount(postId);
+        postRepository.incrementViewCountBy(postId, 3L);
         postRepository.incrementLikeCount(postId);
 
         // then
         Post incremented = postRepository.findById(postId).orElseThrow();
         assertThat(incremented.getReplyCount()).isEqualTo(1);
         assertThat(incremented.getRepostCount()).isEqualTo(1);
-        assertThat(incremented.getViewCount()).isEqualTo(1);
+        assertThat(incremented.getViewCount()).isEqualTo(3);
         assertThat(incremented.getLikeCount()).isEqualTo(1);
 
         // when

@@ -40,6 +40,9 @@ app:
   session:
     maximum-sessions: ${SESSION_MAX_SESSIONS:2}
     max-sessions-prevents-login: ${SESSION_MAX_PREVENTS_LOGIN:false}
+  post-view:
+    # Redis에 모인 게시글 조회수를 DB로 옮기는 주기 (매분 0초). Spring cron은 초를 포함한 6필드다.
+    flush-cron: ${POST_VIEW_FLUSH_CRON:0 * * * * *}
 
 server:
   servlet:
